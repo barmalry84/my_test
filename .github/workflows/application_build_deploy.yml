@@ -48,5 +48,6 @@ jobs:
         chmod +x ./kubectl && mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
         aws eks --region eu-west-1 update-kubeconfig --name qa-eks-test
         cd application/eks_templates/
+        kubectl apply -f hello-world-service.yaml
 
         
