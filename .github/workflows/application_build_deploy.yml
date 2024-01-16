@@ -46,7 +46,7 @@ jobs:
       run: |
         curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.28.5/2024-01-04/bin/linux/amd64/kubectl
         chmod +x ./kubectl && mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
-        aws eks --region eu-west-1 update-kubeconfig --name hello-world-services
+        aws eks --region eu-west-1 update-kubeconfig --name qa-test-vpc
         cd application/eks_templates/
 
         
