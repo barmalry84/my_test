@@ -28,9 +28,7 @@ jobs:
     - name: Set unique tag
       run: |
         if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-          echo "DOCKER_TAG=${{ github.sha }}" >> $GITHUB_ENV
-        elif [[ "${{ github.ref }}" == refs/heads/test* ]]; then
-          echo "DOCKER_TAG=${{ github.sha }}-test" >> $GITHUB_ENV
+          echo "DOCKER_TAG=$(git rev-parse --short=7 "${{ github.sha }}")" >> $GITHUB_ENV
         else
           echo "Tagging not required as this is not test or main push"
         fi
@@ -41,6 +39,7 @@ jobs:
         ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
       run: |
         cd application
+        
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$DOCKER_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$DOCKER_TAG
 
