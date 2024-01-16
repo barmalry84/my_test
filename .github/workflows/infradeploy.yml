@@ -1,0 +1,84 @@
+  name: Infra CI/CD
+
+  on:
+    workflow_dispatch:
+    push:
+      paths:
+        - 'terraform/**'
+
+  jobs:
+    terraform_checks_and_plan:
+      name: Terraform Format, Lint & Plan
+      runs-on: ubuntu-latest
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: "1.5.7"
+
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "eu-west-1"
+
+      - name: Terraform Format Check
+        run: |
+          cd terraform
+          terraform fmt -check
+
+      - name: Install tflint
+        run: |
+          wget https://github.com/terraform-linters/tflint/releases/download/v0.29.0/tflint_linux_amd64.zip
+          unzip tflint_linux_amd64.zip
+          sudo mv tflint /usr/bin/
+
+      - name: Terraform Lint Check
+        run: |
+          cd terraform
+          tflint
+
+      - name: Terraform Initialization
+        run: |
+          cd terraform
+          terraform init
+
+      - name: Terraform Plan
+        run: |
+          cd terraform
+          terraform plan
+
+    terraform_apply:
+      if: github.ref == 'refs/heads/main' # This ensures apply only runs for the main branch
+      name: Terraform Apply
+      needs: terraform_checks_and_plan
+      runs-on: ubuntu-latest
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: "1.5.7"
+      - name: Setup AWS Credentials
+
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "eu-west-1"
+
+      - name: Terraform Initialization
+        run: |
+          cd terraform
+          terraform init
+
+      - name: Terraform Apply
+        run: |
+          cd terraform
+          terraform apply -auto-approve
