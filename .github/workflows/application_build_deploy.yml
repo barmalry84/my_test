@@ -25,22 +25,14 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Set unique tag
-      run: |
-        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-          echo "DOCKER_TAG=$(git rev-parse --short=7 "${{ github.sha }}")" >> $GITHUB_ENV
-        else
-          echo "Tagging not required as this is not test or main push"
-        fi
-
     - name: Build, tag, and push image to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
       run: |
         cd application 
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$DOCKER_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$DOCKER_TAG
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
     - name: Deploy application to EKS
       run: |

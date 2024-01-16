@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: hello-world-service
-        image: 381492243289.dkr.ecr.eu-west-1.amazonaws.com/hello-world-service:2.0
+        image: 381492243289.dkr.ecr.eu-west-1.amazonaws.com/hello-world-service:latest
         ports:
         - containerPort: 80
   strategy:
