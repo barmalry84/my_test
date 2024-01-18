@@ -7,7 +7,7 @@
         - 'terraform/**'
 
   jobs:
-    terraform_checks_and_plan:
+    terraform_checks:
       name: Terraform Format, Lint & Plan
       runs-on: ubuntu-latest
       steps:
@@ -45,20 +45,6 @@
           tflint
           cd ../eks_addons
           tflint
-
-      - name: Terraform Initialization
-        run: |
-          cd terraform/eks
-          terraform init
-          cd ../eks_addons
-          terraform init
-
-      - name: Terraform Plan
-        run: |
-          cd terraform/eks
-          terraform plan
-          cd ../eks_addons
-          terraform plan
 
     terraform_apply:
       if: github.ref == 'refs/heads/main' # This ensures apply only runs for the main branch
