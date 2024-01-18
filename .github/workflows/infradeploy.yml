@@ -30,7 +30,7 @@
         run: |
           cd terraform/eks
           terraform fmt -check
-          cd terraform/eks_addons
+          cd ../eks_addons
           terraform fmt -check
 
       - name: Install tflint
@@ -43,21 +43,21 @@
         run: |
           cd terraform/eks
           tflint
-          cd terraform/eks_addons
+          cd ../eks_addons
           tflint
 
       - name: Terraform Initialization
         run: |
           cd terraform/eks
           terraform init
-          cd terraform/eks_addons
+          cd ../eks_addons
           terraform init
 
       - name: Terraform Plan
         run: |
           cd terraform/eks
           terraform plan
-          cd terraform/eks_addons
+          cd ../eks_addons
           terraform plan
 
     terraform_apply:
@@ -93,12 +93,12 @@
         run: |
           cd terraform/eks
           terraform init
-          cd terraform/eks_addons
+          cd ../eks_addons
           terraform init
 
       - name: Terraform Apply
         run: |
           cd terraform/eks
           terraform apply -auto-approve
-          cd terraform/eks_addons
+          cd ../eks_addons
           terraform apply -auto-approve
