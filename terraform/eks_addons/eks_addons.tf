@@ -48,5 +48,3 @@ helm install grafana grafana/grafana --namespace monitoring
 EOT
   }
 }
-
-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
