@@ -8,7 +8,7 @@
 
   jobs:
     terraform_checks:
-      name: Terraform Format, Lint & Plan
+      name: Terraform Format, Lint
       runs-on: ubuntu-latest
       steps:
       - name: Checkout code
@@ -70,10 +70,10 @@
       - name: Helm install
         run: |
           curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-          apt-get install apt-transport-https --yes
+          sudo apt-get install apt-transport-https --yes
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-          apt-get update
-          apt-get install helm
+          sudo apt-get update
+          sudo apt-get install helm
 
       - name: Terraform Initialization
         run: |
