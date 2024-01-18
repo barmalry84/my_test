@@ -54,10 +54,7 @@ kind: Service
 metadata:
   name: hello-world-service
   namespace: hello-world-services
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: nlb
 spec:
-  type: LoadBalancer
   selector:
     app: hello-world-service
   ports:
@@ -70,7 +67,11 @@ kind: Ingress
 metadata:
   name: hello-world-service-ingress
   namespace: hello-world-services
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
 spec:
+  ingressClassName: alb
   rules:
   - host: hello-world-service.com
     http:

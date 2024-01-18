@@ -15,14 +15,14 @@ provider "aws" {
 terraform {
   backend "s3" {
     bucket  = "backend-bucket-16012024"
-    key     = "state"
+    key     = "eks/state"
     region  = "eu-west-1"
     encrypt = true
   }
 
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
     }
   }
 }

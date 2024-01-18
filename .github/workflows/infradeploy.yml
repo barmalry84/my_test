@@ -28,7 +28,9 @@
 
       - name: Terraform Format Check
         run: |
-          cd terraform
+          cd terraform/eks
+          terraform fmt -check
+          cd terraform/eks_addons
           terraform fmt -check
 
       - name: Install tflint
@@ -39,17 +41,23 @@
 
       - name: Terraform Lint Check
         run: |
-          cd terraform
+          cd terraform/eks
+          tflint
+          cd terraform/eks_addons
           tflint
 
       - name: Terraform Initialization
         run: |
-          cd terraform
+          cd terraform/eks
+          terraform init
+          cd terraform/eks_addons
           terraform init
 
       - name: Terraform Plan
         run: |
-          cd terraform
+          cd terraform/eks
+          terraform plan
+          cd terraform/eks_addons
           terraform plan
 
     terraform_apply:
@@ -73,12 +81,24 @@
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: "eu-west-1"
 
+      - name: Helm install
+        run: |
+          curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+          apt-get install apt-transport-https --yes
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+          apt-get update
+          apt-get install helm
+
       - name: Terraform Initialization
         run: |
-          cd terraform
+          cd terraform/eks
+          terraform init
+          cd terraform/eks_addons
           terraform init
 
       - name: Terraform Apply
         run: |
-          cd terraform
+          cd terraform/eks
+          terraform apply -auto-approve
+          cd terraform/eks_addons
           terraform apply -auto-approve

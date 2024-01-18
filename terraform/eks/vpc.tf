@@ -10,4 +10,7 @@ module "vpc" {
   single_nat_gateway     = true
   one_nat_gateway_per_az = false
   enable_dns_hostnames   = true
+
+  private_subnet_tags    = {"kubernetes.io/role/internal-elb": "1"}
+  public_subnet_tags     = {"kubernetes.io/role/elb": "1"}
 }
