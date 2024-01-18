@@ -49,7 +49,7 @@
     terraform_apply:
       if: github.ref == 'refs/heads/main' # This ensures apply only runs for the main branch
       name: Terraform Apply
-      needs: terraform_checks_and_plan
+      needs: terraform_checks
       runs-on: ubuntu-latest
       steps:
       - name: Checkout code
