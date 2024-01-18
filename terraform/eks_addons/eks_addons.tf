@@ -9,7 +9,7 @@ data "aws_eks_node_group" "group" {
 }
 
 data "aws_eks_cluster" "eks" {
-  name            = local.eks_name
+  name = local.eks_name
 }
 
 data "aws_eks_cluster_auth" "eks" {
@@ -17,19 +17,19 @@ data "aws_eks_cluster_auth" "eks" {
 }
 
 module "eks_monitoring_logging" {
-    
-    source            = "shamimice03/eks-monitoring-logging/aws"
-    
-    cluster_name      = local.eks_name
-    aws_region        = "eu-west-1"
-    namespace         = "amazon-cloudwatch"
 
-    enable_cwagent    = true
-    enable_fluent_bit = true
-    
-    nodegroup_roles = [
-      split("/", data.aws_eks_node_group.group.node_role_arn)[1]
-    ]
+  source = "shamimice03/eks-monitoring-logging/aws"
+
+  cluster_name = local.eks_name
+  aws_region   = "eu-west-1"
+  namespace    = "amazon-cloudwatch"
+
+  enable_cwagent    = true
+  enable_fluent_bit = true
+
+  nodegroup_roles = [
+    split("/", data.aws_eks_node_group.group.node_role_arn)[1]
+  ]
 }
 
 resource "null_resource" "adding_additional_things" {

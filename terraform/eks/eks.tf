@@ -13,7 +13,7 @@ module "eks" {
 
   eks_managed_node_groups = {
     one = {
-      name = "node-group-1"
+      name            = "node-group-1"
       use_name_prefix = false
 
       instance_types = ["t3.medium"]
