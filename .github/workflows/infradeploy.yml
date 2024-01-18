@@ -74,7 +74,6 @@
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
           sudo apt-get update
           sudo apt-get install helm
-          aws eks --region eu-west-1 update-kubeconfig --name qa-eks-test
 
       - name: Terraform Initialization
         run: |
@@ -88,4 +87,5 @@
           cd terraform/eks
           terraform apply -auto-approve
           cd ../eks_addons
+          aws eks --region eu-west-1 update-kubeconfig --name qa-eks-test
           terraform apply -auto-approve
