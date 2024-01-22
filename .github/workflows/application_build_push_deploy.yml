@@ -7,7 +7,7 @@ on:
       - 'app/**'
       - 'iac/app_iac/deply_iac/**'
     branches:
-      - '**'
+      - 'main'
   pull_request:
     paths:
       - 'app/**'
@@ -77,12 +77,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name:  Automated Version Bump
-      id: version-bump
-      uses:  phips28/gh-action-bump-version@master
-      with:
-        minor-wording: feature
-        major-wording: major
-        patch-wording: patch,fix
+        id: version-bump
+        uses:  phips28/gh-action-bump-version@master
+        with:
+          minor-wording: feature
+          major-wording: major
+          patch-wording: patch,fix
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1

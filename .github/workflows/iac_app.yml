@@ -3,10 +3,10 @@
   on:
     workflow_dispatch:
     push:
+      branches: 
+        - main
       paths:
-        - 'iac/app_iac/**'
-      paths-ignore:
-        - 'iac/app_iac/deploy_iac/**'
+        - 'iac/app_iac/*'
 
   jobs:
     terraform_checks:
