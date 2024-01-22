@@ -37,7 +37,7 @@
       - name: Terraform Format and Lint Check
         working-directory: ./iac/app_iac
         run: |
-          terraform fmt
+          terraform fmt -check
           tflint
 
     terraform_apply:
