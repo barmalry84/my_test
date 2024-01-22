@@ -16,6 +16,7 @@ on:
 jobs:
   running_tests:
     runs-on: ubuntu-latest
+    name: Tests
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -34,8 +35,7 @@ jobs:
   build_application_and_push_to_ECR:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    name: Tests
-    needs: running_tests
+    name: Build and Push
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -71,7 +71,7 @@ jobs:
 
   terraform_apply:
       if: github.ref == 'refs/heads/main'
-      name: Terraform Apply
+      name: Deploy via Terraform Apply
       needs: build_application_and_push_to_ECR
       runs-on: ubuntu-latest
       steps:
