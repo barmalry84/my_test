@@ -34,6 +34,8 @@ jobs:
   build_application_and_push_to_ECR:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    name: Tests
+    needs: running_tests
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
