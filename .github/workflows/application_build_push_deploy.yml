@@ -73,12 +73,12 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$TAG
 
     - name: Terraform Initialization
-      working-directory: ./iac/deploy_iac
+      working-directory: ./iac/app_iac/deploy_iac
       run: |
         terraform init
 
     - name: Terraform Apply
-      working-directory: ./iac/deploy_iac
+      working-directory: ./iac/app_iac/deploy_iac
       env:
         TAG: ${{ steps.version-bump.outputs.newTag }}
       run: |
