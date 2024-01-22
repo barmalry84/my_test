@@ -32,10 +32,10 @@ jobs:
         npm ci
         npm test
 
-  build_application_and_push_to_ECR:
+  build_application_and_push_to_ECR_deploy_via_terraform:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    name: Build and Push
+    name: Build, Push and Deploy
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -72,47 +72,15 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$TAG
 
-  terraform_apply:
-      if: github.ref == 'refs/heads/main'
-      name: Deploy via Terraform Apply
-      needs: build_application_and_push_to_ECR
-      runs-on: ubuntu-latest
-      steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Terraform Initialization
+      working-directory: ./iac/deploy_iac
+      run: |
+        terraform init
 
-      - name:  Automated Version Bump
-        id: version-bump
-        uses:  phips28/gh-action-bump-version@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-          PACKAGEJSON_DIR: ./app
-        with:
-          minor-wording: feature
-          major-wording: major
-          patch-wording: patch,fix
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: "1.5.7"
-      - name: Setup AWS Credentials
-
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: "eu-west-1"
-
-      - name: Terraform Initialization
-        working-directory: ./iac/deploy_iac
-        run: |
-          terraform init
-
-      - name: Terraform Apply
-        working-directory: ./iac/deploy_iac
-        env:
-          TAG: ${{ steps.version-bump.outputs.newTag }}
-        run: |
-          terraform apply -auto-approve -var="image_version=$TAG"
+    - name: Terraform Apply
+      working-directory: ./iac/deploy_iac
+      env:
+        TAG: ${{ steps.version-bump.outputs.newTag }}
+      run: |
+        terraform apply -auto-approve -var="image_version=$TAG"
         
