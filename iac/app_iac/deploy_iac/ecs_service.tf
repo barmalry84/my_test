@@ -4,47 +4,59 @@ resource "aws_security_group" "people_info_api_sg" {
   vpc_id      = data.aws_vpc.precreated_vpc.id
 }
 
-resource "aws_security_group_rule" "people_info_api_sg_rules" {
-  for_each          = toset([for subnet in data.aws_subnets.private : subnet.cidr_block])
+resource "aws_security_group_rule" "people_info_api_ingress_status" {
+  for_each = toset([for s in data.aws_subnet.private : s.cidr_block])
+
   security_group_id = aws_security_group.people_info_api_sg.id
+  type              = "ingress"
+  from_port         = 3000
+  to_port           = 3000
+  protocol          = "tcp"
+  cidr_blocks       = [each.key]
+}
 
-  dynamic "ingress_rule" {
-    for_each = [3000, 5050]
+resource "aws_security_group_rule" "people_info_api_ingress_metrics" {
+  for_each = toset([for s in data.aws_subnet.private : s.cidr_block])
 
-    content {
-      type        = "ingress"
-      from_port   = ingress_rule
-      to_port     = ingress_rule
-      protocol    = "tcp"
-      cidr_blocks = [each.key]
-    }
-  }
+  security_group_id = aws_security_group.people_info_api_sg.id
+  type              = "ingress"
+  from_port         = 5050
+  to_port           = 5050
+  protocol          = "tcp"
+  cidr_blocks       = [each.key]
+}
 
-  dynamic "alb_ingress_rule" {
-    for_each = [3000, 5050]
+resource "aws_security_group_rule" "alb_ecs_ingress_status" {
+  security_group_id        = aws_security_group.people_info_api_sg.id
+  type                     = "ingress"
+  from_port                = 3000
+  to_port                  = 3000
+  protocol                 = "tcp"
+  source_security_group_id = data.aws_security_group.precreated_alb_sg.id
+}
 
-    content {
-      type                     = "ingress"
-      from_port                = alb_ingress_rule
-      to_port                  = alb_ingress_rule
-      protocol                 = "tcp"
-      source_security_group_id = aws_security_group.people_info_api_sg.id
-    }
-  }
+resource "aws_security_group_rule" "alb_ecs_ingress_metrics" {
+  security_group_id        = aws_security_group.people_info_api_sg.id
+  type                     = "ingress"
+  from_port                = 5050
+  to_port                  = 5050
+  protocol                 = "tcp"
+  source_security_group_id = data.aws_security_group.precreated_alb_sg.id
+}
 
-  egress_rule {
-    type        = "egress"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "aws_security_group_rule" "egress" {
+  security_group_id = aws_security_group.people_info_api_sg.id
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
 }
 
 resource "aws_ecs_service" "people_info_api" {
   name            = "people-info-api-service"
-  cluster         = aws_ecs_cluster.people_info_api_cluster.id
-  task_definition = aws_ecs_task_definition.people-info-api.arn
+  cluster         = data.aws_ecs_cluster.people_info_api_cluster.id
+  task_definition = aws_ecs_task_definition.people_info_api.arn
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -64,7 +76,7 @@ resource "aws_ecs_service" "people_info_api" {
     container_port   = 5050
   }
 
-  desired_count = 3
+  desired_count = 1
 
   lifecycle {
     create_before_destroy = true
@@ -77,12 +89,12 @@ resource "aws_ecs_task_definition" "people_info_api" {
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"
   memory                   = "1024"
-  execution_role_arn       = aws_iam_role.api_ecs_role.arn
-  task_role_arn            = aws_iam_role.api_ecs_role.arn
+  execution_role_arn       = data.aws_iam_role.precreated_iam.arn
+  task_role_arn            = data.aws_iam_role.precreated_iam.arn
 
   container_definitions = jsonencode([{
     name  = "people-info-api"
-    image = "${data.aws_ecr_repository.people-info-api.repository_url}:var.image_version"
+    image = "${data.aws_ecr_repository.precreated_ecr.repository_url}:var.image_version"
 
     portMappings = [
       {
@@ -98,7 +110,7 @@ resource "aws_ecs_task_definition" "people_info_api" {
       logDriver = "awslogs"
       options = {
         "awslogs-group"         = "/ecs/people-info-api"
-        "awslogs-region"        = var.region
+        "awslogs-region"        = "eu-west-1"
         "awslogs-stream-prefix" = "ecs"
         "awslogs-create-group"  = "true"
       }

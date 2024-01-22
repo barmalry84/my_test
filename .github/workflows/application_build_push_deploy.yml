@@ -55,7 +55,6 @@ jobs:
       id: version-bump
       uses:  phips28/gh-action-bump-version@master
       env:
-        GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
         PACKAGEJSON_DIR: ./app
       with:
         minor-wording: feature
