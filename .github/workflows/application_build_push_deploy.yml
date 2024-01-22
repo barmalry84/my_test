@@ -1,0 +1,110 @@
+name: Build Node JS app and deploy
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'app/**'
+      - 'iac/app_iac/deply_iac/**'
+    branches:
+      - '**'
+  pull_request:
+    paths:
+      - 'app/**'
+      - 'iac/app_iac/deply_iac/**'
+
+jobs:
+  running_tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14.x
+
+    - name: Install dependencies and run tests
+      working-directory: ./application
+      run: |
+        npm ci
+        npm test
+
+  build_application_and_push_to_ECR:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Configure AWS creds
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: "eu-west-1"
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name:  Automated Version Bump
+      id: version-bump
+      uses:  phips28/gh-action-bump-version@master
+      with:
+        minor-wording: feature
+        major-wording: major
+        patch-wording: patch,fix
+
+    - name: Build, tag, and push image to Amazon ECR
+      working-directory: ./app
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+        TAG: ${{ steps.version-bump.outputs.newTag }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$TAG
+
+  terraform_apply:
+      if: github.ref == 'refs/heads/main'
+      name: Terraform Apply
+      needs: build_application_and_push_to_ECR
+      runs-on: ubuntu-latest
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name:  Automated Version Bump
+      id: version-bump
+      uses:  phips28/gh-action-bump-version@master
+      with:
+        minor-wording: feature
+        major-wording: major
+        patch-wording: patch,fix
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: "1.5.7"
+      - name: Setup AWS Credentials
+
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "eu-west-1"
+
+      - name: Terraform Initialization
+        working-directory: ./iac/deploy_iac
+        run: |
+          terraform init
+
+      - name: Terraform Apply
+        working-directory: ./iac/deploy_iac
+        env:
+          TAG: ${{ steps.version-bump.outputs.newTag }}
+        run: |
+          terraform apply -auto-approve -var="image_version=$TAG"
+        

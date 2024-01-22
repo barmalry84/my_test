@@ -1,0 +1,72 @@
+  name: Infra Resources for application
+
+  on:
+    workflow_dispatch:
+    push:
+      paths:
+        - 'iac/app_iac/**'
+      paths-ignore:
+        - 'iac/app_iac/deploy_iac/**'
+
+  jobs:
+    terraform_checks:
+      name: Terraform Checks
+      runs-on: ubuntu-latest
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: "1.5.7"
+
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "eu-west-1"
+      
+      - name: Tflint
+        run: |
+          wget https://github.com/terraform-linters/tflint/releases/download/v0.29.0/tflint_linux_amd64.zip
+          unzip tflint_linux_amd64.zip
+          sudo mv tflint /usr/bin/
+
+      - name: Terraform Format and Lint Check
+        working-directory: ./iac/app_iac
+        run: |
+          terraform fmt
+          tflint
+
+    terraform_apply:
+      if: github.ref == 'refs/heads/main'
+      name: Terraform Apply
+      needs: terraform_checks
+      runs-on: ubuntu-latest
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: "1.5.7"
+      - name: Setup AWS Credentials
+
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "eu-west-1"
+
+      - name: Terraform Initialization
+        working-directory: ./iac/app_iac
+        run: |
+          terraform init
+
+      - name: Terraform Apply
+        working-directory: ./iac/app_iac
+        run: |
+          terraform apply -auto-approve
