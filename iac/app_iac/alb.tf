@@ -1,5 +1,5 @@
 data "aws_vpc" "precreated_vpc" {
-    filter {
+  filter {
     name   = "tag:Name"
     values = ["vpc-qa"]
   }
@@ -14,7 +14,7 @@ data "aws_subnets" "public" {
 
 resource "aws_lb" "people_info_api" {
   name               = "people-info-api-alb"
-  internal           = false 
+  internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.people_info_api_alb_sg.id]
   subnets            = tolist(data.aws_subnets.public.ids)
@@ -55,12 +55,12 @@ resource "aws_lb_target_group" "people_info_api_tg" {
 resource "aws_lb_listener" "people_info_api_lst" {
   for_each = {
     "status" = {
-      port            = "3000"
-      target_group    = aws_lb_target_group.people_info_api_tg["status"].arn
+      port         = "3000"
+      target_group = aws_lb_target_group.people_info_api_tg["status"].arn
     },
     "metrics" = {
-      port            = "5050"
-      target_group    = aws_lb_target_group.people_info_api_tg["metrics"].arn
+      port         = "5050"
+      target_group = aws_lb_target_group.people_info_api_tg["metrics"].arn
     }
   }
 
