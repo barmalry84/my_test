@@ -30,12 +30,12 @@ Main components of the repo are:
 ### 1. **Basic infrastructure**
 
 To run **iac_deploy_basic** worfklow at first, some dummy push to **iac/basic_iac** folder shall be done in main branch.
-Workflow will run some terraform checks and create basic infrastructure. More can be read here: !!!!!!!
+Workflow will run some terraform checks and create basic infrastructure. More can be read here: [IAC and Terraform Setup Guide](https://github.com/barmalry84/my_test/blob/main/iac/README.md)
 
 ### 2. **Application basic infrastructure**
 
 To run **iac_app** worfklow at first, some dummy push to **iac/app_iac** folder shall be done in main.
-Workflow will run some TF checks and create basic application infrastructure. More can be read here: !!!!!!!
+Workflow will run some TF checks and create basic application infrastructure. More can be read here: [IAC and Terraform Setup Guide](https://github.com/barmalry84/my_test/blob/main/iac/README.md)
 
 ### 3. **Application deployment**
 
@@ -48,7 +48,7 @@ After 1 and 2 steps, we are ready to deploy application. To do that, some dummy 
 The same flow can be used to make changes to the corresponding parts of the system and day-to-day application deployments. 
 
 ### 4. **How to access application**
-After 3 step, application can be accessible via external ALB. ALB domain name could be found in AWS console. More information could be found here:
+After 3 step, application can be accessible via external ALB. ALB domain name could be found in AWS console. More information could be found here: https://github.com/barmalry84/my_test/blob/main/app/README.md
 
 ## How to run application in AWS from local machine
 It is also possible to run deployment of application in AWS from local machine. For that you need to have AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY or AWS_PROFILE or assumed role to the account.
@@ -68,8 +68,8 @@ terraform init; terraform apply
 
 ## Additional README Links
 
-- [IAC and Terraform Setup Guide](https://github.com/Pretendfriend/Falafel-API-Server/blob/a005238977a6bb14f39a9830e3c883c1996b0be4/components/README.md)
-- [Application Guide](https://github.com/Pretendfriend/Falafel-API-Server/blob/a005238977a6bb14f39a9830e3c883c1996b0be4/application/README.md)
+- [IAC and Terraform Setup Guide](https://github.com/barmalry84/my_test/blob/main/iac/README.md)
+- [Application Guide](https://github.com/barmalry84/my_test/blob/main/app/README.md)
 
 ## Monitoring and logging
 1. Embedded Cloudwatch monitoring of ECS.
