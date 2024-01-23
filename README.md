@@ -10,14 +10,14 @@ And DynamoDB is good choice for keeping unstructured datasets in JSON format (wh
 
 Main components of the repo are:
 1. Terraform code to spin up infrastructure (**iac** folder). After some considerations it was decided to divide terraform code at three parts to keep it manageable and decoupled. Also it aims to avoid the initial errors stemming from circular dependencies. 
-1.1 **basic_iac**: code for VPC, networking, ECS cluster. Which is rarely updated and shall not be run with application-related infra code.
-1.2 **app_iac**: code that creates basic application-related resources like ALB, listeners, IAM, DynamoDB etc. Typically it runs more often than **basic_iac** but does not direcly influence application deployment. 
-1.3 **deploy_iac**: code that is directly related to application deployments. That is mostly ECS and Task Definition pointing to certain image.
+	- **basic_iac**: code for VPC, networking, ECS cluster. Which is rarely updated and shall not be run with application-related infra code.
+	- **app_iac**: code that creates basic application-related resources like ALB, listeners, IAM, DynamoDB etc. Typically it runs more often than **basic_iac** but does not direcly influence application deployment. 
+	- **deploy_iac**: code that is directly related to application deployments. That is mostly ECS and Task Definition pointing to certain image.
 2. Application code (**app** folder). Used to store code for Dockerfile and application.
 3. Github Workflows (**.github/workflows**) that automate infra creation and application deployments. There are three:
-3.1 **iac_deploy_basic**: workflow to check and run code for **basic_iac**
-3.2 **iac_app**: workflow to check and run code for **app_iac**.
-3.3 **application_build_push_deploy**: workflow that pulls last application or **deploy_iac** changes, runs tests, builds application and pushes it to ECR and in the end runs **deploy_iac** to make application deployment. This workflows also supports automatic semantic versioning based on commit message.
+	- **iac_deploy_basic**: workflow to check and run code for **basic_iac**
+	- **iac_app**: workflow to check and run code for **app_iac**.
+	- **application_build_push_deploy**: workflow that pulls last application or **deploy_iac** changes, runs tests, builds application and pushes it to ECR and in the end runs **deploy_iac** to make application deployment. This workflows also supports automatic semantic versioning based on commit message.
 
 ## Prerequisites
 
