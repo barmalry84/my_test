@@ -22,6 +22,8 @@ resource "aws_iam_policy" "people_info_api_task_policy" {
       Action = [
         "dynamodb:PutItem",
         "dynamodb:GetItem",
+        "dynamodb:Query",
+        "dynamodb:Scan"
       ],
       Resource = aws_dynamodb_table.people_info.arn
       Effect   = "Allow",

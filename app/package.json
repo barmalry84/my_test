@@ -1,3 +1,50 @@
 {
-	"version": "0.1.4"
+  "name": "people-info-api",
+  "version": "0.0.1",
+  "scripts": {
+    "test": "jest",
+    "start": "ts-node -r dotenv/config src/server.ts",
+    "start:dev:watch": "ts-node-dev -r dotenv/config src/server.ts"
+  },
+  "dependencies": {
+    "@bugsnag/js": "^7.20.0",
+    "@fastify/request-context": "^4.2.0",
+    "aws-sdk": "latest",
+    "dotenv": "^16.0.3",
+    "fastify": "^4.25",
+    "fastify-healthcheck": "^4.4",
+    "fastify-metrics": "^10.6",
+    "fastify-no-icon": "^6.0",
+    "fastify-type-provider-zod": "^1.1.9",
+    "ioredis": "^5.3.1",
+    "pino": "^8.11.0",
+    "pino-noir": "^2.2.1",
+    "pino-pretty": "^9.4.0",
+    "validation-utils": "^7.0.0",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^18.15.11",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "eslint": "^8.38.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jest": "^27.2.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^29.5.0",
+    "mockttp": "^3.7.0",
+    "openapi-types": "^12.1.0",
+    "prettier": "^2.8.7",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "5.0.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+>>>>>>> 3aa3ddd (All together)
 }

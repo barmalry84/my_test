@@ -15,31 +15,11 @@ resource "aws_security_group_rule" "people_info_api_ingress_status" {
   cidr_blocks       = [each.key]
 }
 
-resource "aws_security_group_rule" "people_info_api_ingress_metrics" {
-  for_each = toset([for s in data.aws_subnet.private : s.cidr_block])
-
-  security_group_id = aws_security_group.people_info_api_sg.id
-  type              = "ingress"
-  from_port         = 5050
-  to_port           = 5050
-  protocol          = "tcp"
-  cidr_blocks       = [each.key]
-}
-
 resource "aws_security_group_rule" "alb_ecs_ingress_status" {
   security_group_id        = aws_security_group.people_info_api_sg.id
   type                     = "ingress"
   from_port                = 3000
   to_port                  = 3000
-  protocol                 = "tcp"
-  source_security_group_id = data.aws_security_group.precreated_alb_sg.id
-}
-
-resource "aws_security_group_rule" "alb_ecs_ingress_metrics" {
-  security_group_id        = aws_security_group.people_info_api_sg.id
-  type                     = "ingress"
-  from_port                = 5050
-  to_port                  = 5050
   protocol                 = "tcp"
   source_security_group_id = data.aws_security_group.precreated_alb_sg.id
 }
@@ -70,12 +50,6 @@ resource "aws_ecs_service" "people_info_api" {
     container_port   = 3000
   }
 
-  load_balancer {
-    target_group_arn = data.aws_lb_target_group.precreated_tg_metrics.arn
-    container_name   = "people-info-api"
-    container_port   = 5050
-  }
-
   desired_count = 1
 
   lifecycle {
@@ -94,16 +68,12 @@ resource "aws_ecs_task_definition" "people_info_api" {
 
   container_definitions = jsonencode([{
     name  = "people-info-api"
-    image = "${data.aws_ecr_repository.precreated_ecr.repository_url}:var.image_version"
+    image = "${data.aws_ecr_repository.precreated_ecr.repository_url}:${var.image_version}"
 
     portMappings = [
       {
         containerPort = 3000
         hostPort      = 3000
-      },
-      {
-        containerPort = 5050
-        hostPort      = 5050
       }
     ]
     logConfiguration = {

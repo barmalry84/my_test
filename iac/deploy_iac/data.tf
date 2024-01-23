@@ -25,10 +25,6 @@ data "aws_lb_target_group" "precreated_tg_status" {
   name = "people-info-tg-status"
 }
 
-data "aws_lb_target_group" "precreated_tg_metrics" {
-  name = "people-info-tg-metrics"
-}
-
 data "aws_ecr_repository" "precreated_ecr" {
   name       = "people-info-api"
 }
