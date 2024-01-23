@@ -5,6 +5,13 @@
 This repository contains infra and application code to run small API based on NodeJS and Typescript. Application can write people information to the database, retrieve information and also has status endpoint. 
 Additionally some GitHub workflows are given to automate process of infa creation and application deployment.
 
+After some consideration, decision was made to utilise AWS ECS Fargate service for API and DynamoDB for keeping people information. Running the application as AWS ECS with Fargate is the most straightforward and easily achievable solution, especially when considering the "test" application in isolation. ECS offers a great option for more isolated workloads utilizing containers. It can host full applications with several microservices as well.
+And DynamoDB is good choice for keeping unstructured datasets in JSON format (what was the part of the initial task).
+
+
+Main components are:
+1. Terraform code to spin
+
 
 ## Deployment Sequence
 
