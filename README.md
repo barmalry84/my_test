@@ -3,7 +3,7 @@
 ## What and why
 
 This repository contains infra and application code to run small API based on NodeJS and Typescript. Application can write people information to the database, retrieve information and also has status endpoint. 
-Additionally some GitHub workflows are given to automate process of infa creation and applcication deployment.
+Additionally some GitHub workflows are given to automate process of infa creation and application deployment.
 
 
 ## Deployment Sequence
