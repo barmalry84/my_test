@@ -5,13 +5,13 @@ on:
   push:
     paths:
       - 'app/**'
-      - 'iac/deply_iac/**'
+      - 'iac/deploy_iac/**'
     branches:
       - 'main'
   pull_request:
     paths:
       - 'app/**'
-      - 'iac/deply_iac/**'
+      - 'iac/deploy_iac/**'
 
 jobs:
   running_tests:
