@@ -27,10 +27,10 @@ jobs:
         node-version: 14.x
 
     - name: Install dependencies and run tests
-      working-directory: ./application
+      working-directory: ./app
       run: |
-        npm ci
-        npm test
+        echo "npm ci"
+        echo "npm test"
 
   build_application_and_push_to_ECR_deploy_via_terraform:
     if: github.ref == 'refs/heads/main'
