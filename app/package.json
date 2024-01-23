@@ -1,6 +1,6 @@
 {
   "name": "people-info-api",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "scripts": {
     "test": "jest",
     "start": "ts-node -r dotenv/config src/server.ts",
