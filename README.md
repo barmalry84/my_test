@@ -3,85 +3,82 @@
 ## What and why
 
 This repository contains infra and application code to run small API based on NodeJS and Typescript. Application can write people information to the database, retrieve information and also has status endpoint. 
-Additionally some GitHub workflows are given to automate process of infa creation and application deployment.
+Additionally some GitHub workflows are stored to automate process of infa creation and application deployment.
 
 After some consideration, decision was made to utilise AWS ECS Fargate service for API and DynamoDB for keeping people information. Running the application as AWS ECS with Fargate is the most straightforward and easily achievable solution, especially when considering the "test" application in isolation. ECS offers a great option for more isolated workloads utilizing containers. It can host full applications with several microservices as well.
-And DynamoDB is good choice for keeping unstructured datasets in JSON format (what was the part of the initial task).
-
+And DynamoDB is good choice for keeping unstructured datasets in JSON format (what was the part of the initial task) as it is scalable and can deal with a significant amount of read writes.  The solution is also fully managed.
 
 Main components are:
-1. Terraform code to spin
+1. Terraform code to spin up infrastructure (**iac** folder). After some considerations it was decided to divide terraform code at three parts to keep it manageable and decoupled. Also it aims to avoid the initial errors stemming from circular dependencies. 
+	1.1 **basic_iac**: code for VPC, networking, ECS cluster. Which is rarely updated and shall not be run with application-related infra code.
+	1.2 **app_iac**: code that creates basic application-related resources like ALB, listeners, IAM etc. Typically it runs more often than **basic_iac** but does not direcly influence application deployment. 
+	1.3 **deploy_iac**: code that is directly related to application deployments. That is mostly ECS and Task Definition.
+2. Application code (**app** folder). Used to store code for Dockerfile and application.
+3. Github Workflows (**.github/workflows**) that automate infra creation and application deployments. There are three:
+	3.1 **iac_deploy_basic**: workflow to check and run code for **basic_iac**
+	3.2 **iac_app**: workflow to check and run code for **app_iac**.
+	3.3 **application_build_push_deploy**: workflow that pulls last application or **deploy_iac** changes, runs tests, builds application and pushes it to ECR and in the end runs **deploy_iac** to make application deployment. This workflows also supports automatic semantic versioning based on commint message.
 
 
-## Deployment Sequence
+## Prerequisites
 
-For a fresh deployment, the following sequence is essential due to the interdependence between the infrastructure and the application:
+1. AWS account with created user or role (for PoC it can have Admin permissions)
+2. AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and ECR_REPOSITORY (this one after first **iac_deploy_basic** run) GitHub secrets are created.
+3. S3 bucket **people-info-api** is created in AWS account for terraform state files (eu-west-1).
 
-### 1. **Terraform Infrastructure Setup**
+## How to run application in AWS
 
-Initially, kick off the Terraform pipeline. When setting up for the first time, this is expected to fail because of a circular dependency. The Terraform setup expects a container image in the ECR repository, but at this point, the ECR repository isn't ready yet.
+### 1. **Basic infrastructure**
 
-Errors with ALB deployment are expected due to it not fully waiting for subnet creation, even with depends_on
+To run **iac_deploy_basic** worfklow at first, some dummy push to **iac/basic_iac** folder shall be done in main.
+Workflow will run some TF checks and create basic infrastructure. More can be read here: !!!!!!!
 
-### 2. **Application Deployment to ECR**
+### 2. **Application basic infrastructure**
 
-Once the initial Terraform pipeline run completes, initiate the application's GitHub Action. This action will build the Docker image of the application and push it to the newly created ECR repository.
+To run **iac_app** worfklow at first, some dummy push to **iac/app_iac** folder shall be done in main.
+Workflow will run some TF checks and create basic application infrastructure. More can be read here: !!!!!!!
 
-### 3. **Finalizing Infrastructure Setup**
+### 3. **Application deployment**
 
-After the Docker image of the application is available in the ECR, rerun the Terraform pipeline. This time, Terraform will complete the setup, deploying the ECS tasks using the Docker image from ECR and finalizing the rest of the infrastructure.
+After 1 and 2 steps, we are reay to deploy application. To do that, some dummy push should be done either to **/iac/app_iac** or **app**. It shall trigger **application_build_push_deploy** workflow. It:
+1. Runs npm tests.
+2. Define current version of application and bump it according to the semantic rules.
+3. Build application image with new version and push it to ECR.
+4. Create ECS and point task defintion with new version to it. 
+
+The same flow can be used to make changes to the corresponding parts of the system and day-to-day application deployments. 
+
+### 4. **How to access application**
+After 3 step, application can be accessible via external ALB. ALB domain name could be found in AWS console. More information could be found here: !!!!!!!
+
+## How to run application in AWS from local machine
+It is also possible to run deployment of application in AWS from local machine. For that you need to have AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY or AWS_PROFILE or assumed role to the account.
+
+```bash
+cd iac/basic_iac
+terraform init; terraform apply
+cd ../app_iac
+terraform init; terraform apply
+aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin {YOUR_ACCOUNT}.dkr.ecr.eu-west-1.amazonaws.com
+cd ../../app
+docker build -t {YOUR_ACCOUNT}.dkr.ecr.eu-west-1.amazonaws.com/people-info-api:{NEW_VERSION}
+
+```
 
 ## Quick Links
 
 - [Terraform Infrastructure Setup Guide](https://github.com/Pretendfriend/Falafel-API-Server/blob/a005238977a6bb14f39a9830e3c883c1996b0be4/components/README.md)
 - [Application Dockerization and ECR Deployment Guide](https://github.com/Pretendfriend/Falafel-API-Server/blob/a005238977a6bb14f39a9830e3c883c1996b0be4/application/README.md)
 
-## Future Plans:
+## Monitoring and logging
+1. Embedded Cloudwatch monitoring of ECS.
+2. Prometheus metrics of application accessible via ALB endpoint and path **/metrics**.
+3. Application logs requests and internal state and sends logs to Cloudwatch log group.
 
-1. **Separate Deployment of Backend Infrastructure**: To create a more streamlined deployment process, plans are in place to separate the deployment of backend infrastructure from the container infrastructure. This change aims to avoid the initial errors stemming from circular dependencies.
+## Possible improvements:
 
-2. **Implement Prometheus Logging**: Finalize the integration of Prometheus for logging. This will enhance monitoring capabilities, providing granular insights into system performance and potential issues.
+3. **Infrastructure as Code Enhancements**: To make the infrastructure code more modular and manageable.
 
-3. **Infrastructure as Code Enhancements**: Explore potential optimizations in Terraform configurations to make the infrastructure setup more modular and manageable.
-
-4. **Container Orchestration**: Look into enhancing the ECS setup for better scalability and fault tolerance, possibly integrating with other AWS services or Kubernetes.
+4. **EKS**: Look into enhancing setup with EKS especially considering case with many microservices that require internal communication.
 
 5. **Security Improvements**: Constantly review and update the security configurations, ensuring that the infrastructure and application are resistant to potential threats.
-
-Feel free to provide feedback or suggest additional improvements to enhance the deployment process and the overall robustness of the FalafelAPI's setup.
-
-## Required Github Actions Secrets
-the following GHA secrets are required to run the deployments
-
-AWS_ACCESS_KEY\
-AWS_SECRET_ACCESS_KEY\
-AWS_REGION\
-ECR_REPOSITORY
-
-## Design decisions
-
-### Database Choice
-The requirements stated that the input would be JSON, so with that information I decided to use DynamoDB in AWS as it is scalable and can deal with a significant amount of read writes.  The solution is also fully managed.
-
-The drawback to this decsion is that a local setup is significantly more difficult, however this could be rectified by setting up a dev instance of DynamoDB in a lower enviroment for developers to connect to.
-
-### ECS over EKS
-ECS was chosen due to the requirements only specifying a single application.  Ths meant there was no need for a full microservices architecture. ECS offers a great option for more isolated workloads utilising containers, this can have full applications with several microservices as well.  However it is not as managable and customisable to you needs as EKS would be.  Finally Fargate was chosen as only running one service does not require a Cluster of EC2 setup.  Fargates host infrastructure is fully managed by AWS which reduces the opertional burden of the administators.
-
-## Final Thoughts
-
-It was an enjoyable excercise and I have learned a an amount about Javascript, however the task whilt appearing simple at first is larger once you pull apart all the required elements
-
-### What went well
-I was able to use my knowledge of using other languages like Python to adapt to using Javascript and whilst there were times I was frustrated and wanted to just use the language I knew, I am glad I didn't. \
-The initial design of the AWS infrastructure and code was straight forward.
-
-### What didn't go well
-I underestimated the size of the task initially, and when planning I realised the true scope. My lack of understanding of NodeJS and Javascript led me down a few rabbit holes which became quite frustrating. I had changed the testing framework several times trying to get one that worked, and I really had issues with my first choice of Mocha and Chai as it seemed be doing a lot more than required.  After changing to Jest I found it easier to complete the works.  I had struggled to get the mocking of GET from the mock DynamoDB and ended up deciding to scrap that section to focus on the ore task.\
-I started the work to implement monitoring with Prometheus and Grafana but ran out of time.
-
-###  How I would change it
-If this was my choice to deploy I would not use a Javascript API and use AWS API gateway instead.  I believe this would be a more stable and scalable design. I would also ensure a WAF was protecting the edge as well DDOS protection.
-
-### Comments on the task
-I think the task is quite a large ask and it was difficult to fit in around personal commitments and working full time.  The feedback I would give is shorten the task by providing the initial setup of the VPC and Subnets in a repo that the person can just fork and go from there.  Further to that suggestion I would sneak in a few gotchas, like subnets all going to one AZ or some bad NACL or Routing design.

@@ -41,7 +41,7 @@ resource "aws_lb_target_group" "people_info_api_tg" {
 
 resource "aws_lb_listener" "people_info_api_lst" {
   load_balancer_arn = aws_lb.people_info_api.arn
-  port              = "3000"
+  port              = "80"
   protocol          = "HTTP"
 
   default_action {
@@ -56,11 +56,11 @@ resource "aws_security_group" "people_info_api_alb_sg" {
   vpc_id      = data.aws_vpc.precreated_vpc.id
 }
 
-resource "aws_security_group_rule" "people_info_api_alb_ingress_3000" {
+resource "aws_security_group_rule" "people_info_api_alb_ingress_80" {
   security_group_id = aws_security_group.people_info_api_alb_sg.id
   type              = "ingress"
-  from_port         = 3000
-  to_port           = 3000
+  from_port         = 80
+  to_port           = 80
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
 }
