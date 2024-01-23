@@ -62,18 +62,20 @@ terraform init; terraform apply
 aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin {YOUR_ACCOUNT}.dkr.ecr.eu-west-1.amazonaws.com
 cd ../../app
 docker build -t {YOUR_ACCOUNT}.dkr.ecr.eu-west-1.amazonaws.com/people-info-api:{NEW_VERSION}
-
+docker push {YOUR_ACCOUNT}.dkr.ecr.eu-west-1.amazonaws.com/people-info-api:{NEW_VERSION}
+cd ../iac/app_iac
+terraform init; terraform apply
 ```
 
 ## Quick Links
 
-- [Terraform Infrastructure Setup Guide](https://github.com/Pretendfriend/Falafel-API-Server/blob/a005238977a6bb14f39a9830e3c883c1996b0be4/components/README.md)
-- [Application Dockerization and ECR Deployment Guide](https://github.com/Pretendfriend/Falafel-API-Server/blob/a005238977a6bb14f39a9830e3c883c1996b0be4/application/README.md)
+- [IAC and Terraform Setup Guide](https://github.com/Pretendfriend/Falafel-API-Server/blob/a005238977a6bb14f39a9830e3c883c1996b0be4/components/README.md)
+- [Application Guide](https://github.com/Pretendfriend/Falafel-API-Server/blob/a005238977a6bb14f39a9830e3c883c1996b0be4/application/README.md)
 
 ## Monitoring and logging
 1. Embedded Cloudwatch monitoring of ECS.
-2. Prometheus metrics of application accessible via ALB endpoint and path **/metrics**.
-3. Application logs requests and internal state and sends logs to Cloudwatch log group.
+2. Prometheus metrics of application are accessible via ALB endpoint and path **/metrics**.
+3. Application logs requests and internal state; sends logs to Cloudwatch log group.
 
 ## Possible improvements:
 

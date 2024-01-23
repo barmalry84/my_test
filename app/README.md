@@ -19,3 +19,4 @@ cp .env.example .env
 ### How to run app in dev mode
 
 Visit `localhost:3000` in browser.
+
