@@ -5,13 +5,13 @@ on:
   push:
     paths:
       - 'app/**'
-      - 'iac/app_iac/deply_iac/**'
+      - 'iac/deply_iac/**'
     branches:
       - 'main'
   pull_request:
     paths:
       - 'app/**'
-      - 'iac/app_iac/deply_iac/**'
+      - 'iac/deply_iac/**'
 
 jobs:
   running_tests:
@@ -72,12 +72,12 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$TAG
 
     - name: Terraform Initialization
-      working-directory: ./iac/app_iac/deploy_iac
+      working-directory: ./iac/deploy_iac
       run: |
         terraform init
 
     - name: Terraform Apply
-      working-directory: ./iac/app_iac/deploy_iac
+      working-directory: ./iac/deploy_iac
       env:
         TAG: ${{ steps.version-bump.outputs.newTag }}
       run: |

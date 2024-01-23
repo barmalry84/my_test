@@ -6,7 +6,7 @@
       branches: 
         - main
       paths:
-        - 'iac/app_iac/*'
+        - 'iac/app_iac/**'
 
   jobs:
     terraform_checks:
