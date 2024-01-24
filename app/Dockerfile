@@ -1,11 +1,11 @@
 FROM node:20
 
 # Copy needed things to the working directory
-COPY . /usr/src/app
-RUN cp .env.example .env
+COPY . /usr/src/api
+COPY .env.example /usr/src/api/.env
 
 # Set the working directory in the container
-WORKDIR /usr/src/app
+WORKDIR /usr/src/api
 
 # Install the application dependencies
 RUN npm install
