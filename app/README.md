@@ -47,5 +47,48 @@ After **basic_iac** and **app_iac** stacks are created next steps shall be done:
 
 ## How to use app
 
+Run the following command to verify the server status:
+
+```bash
+curl {ALB_URl}/status
+```
+**Expected**: Server status.
+
+#### 2. Posting Data to `/data` Endpoint
+
+**Request**:
+
+Use the following `curl` command to post data:
+
+```bash
+curl -X POST http://{ALB_URl}/data -H "Content-Type: application/json" -d '{
+  "person_name": "John",
+  "person_surname": "Doe",
+  "person_birthdate": "1990-01-01",
+  "person_address": "123 Main St"
+}'
+```
+
+**Expected**: Appropriate success response indicating the data has been saved/processed. The response should also reply with the data submitted.
+
+#### 3. Retrieve Data by Surname
+
+**Request**:
+
+To get data by the restaurant name, use:
+
+```bash
+curl {ALB_URl}/data?person_surname=<Person Surname>
+```
+
+Replace `<Person Surname>` with the actual name of the person you wish to query.
+
+**Expected**: JSON response containing the details related to the specified person.
 
 
+## Testing
+Is not implemented because task took all dedicated time to it.
+
+## DynamoDB vs Redis
+1. Application saves data to DynamoDB and also puts it to Redis cache level. 
+2. Get request is made to Redis first and then to DynamoDB.
