@@ -61,7 +61,6 @@ jobs:
         patch-wording: patch,fix
 
     - name: Build, tag, and push image to Amazon ECR
-      working-directory: ./app
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
