@@ -1,6 +1,6 @@
 {
   "name": "people-info-api",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "scripts": {
     "test": "jest",
     "start": "ts-node -r dotenv/config src/server.ts",
@@ -10,14 +10,13 @@
     "@bugsnag/js": "^7.20.0",
     "@fastify/request-context": "^4.2.0",
     "aws-sdk": "latest",
-    "ioredis": "latest",
+    "ioredis": "^5.3.1",
     "dotenv": "^16.0.3",
     "fastify": "^4.25",
     "fastify-healthcheck": "^4.4",
     "fastify-metrics": "^10.6",
     "fastify-no-icon": "^6.0",
     "fastify-type-provider-zod": "^1.1.9",
-    "ioredis": "^5.3.1",
     "pino": "^8.11.0",
     "pino-noir": "^2.2.1",
     "pino-pretty": "^9.4.0",
