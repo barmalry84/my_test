@@ -103,7 +103,6 @@ export async function getApp(): Promise<
   })
 
   // app.setErrorHandler(errorHandler)
-
   try {
     await app.ready()
   } catch (err) {

@@ -29,6 +29,7 @@ jobs:
     - name: Install dependencies and run tests
       working-directory: ./app
       run: |
+        npm install
         timeout 20s npm run test
 
   build_application_and_push_to_ECR_deploy_via_terraform:
