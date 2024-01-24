@@ -27,7 +27,6 @@ jobs:
         node-version: 14.x
 
     - name: Install dependencies and run tests
-      working-directory: ./app
       run: |
         npm install
         timeout 20s npm run test
@@ -35,6 +34,7 @@ jobs:
   build_application_and_push_to_ECR_deploy_via_terraform:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    needs: running_tests
     name: Build, Push and Deploy
     steps:
     - name: Checkout code
@@ -54,8 +54,6 @@ jobs:
     - name:  Automated Version Bump
       id: version-bump
       uses:  phips28/gh-action-bump-version@master
-      env:
-        PACKAGEJSON_DIR: ./app
       with:
         minor-wording: feature
         major-wording: major
