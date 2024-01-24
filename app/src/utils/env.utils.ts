@@ -1,5 +1,5 @@
 export function getStringEnvVar(key: string, defaultValue?: string): string {
-  const environment = process.env.ENV || 'qa'
+  const environment = process.env.ENV || 'aws'
 
   if (key === 'ENV') {
     return environment

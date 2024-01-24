@@ -1,7 +1,7 @@
-/* istanbul ignore file */
-
 import { getApp } from './app'
 import { config } from './utils/env'
+
+console.log(config.PORT)
 
 const hasMessage = (error: unknown): error is { message: unknown } =>
   typeof error === 'object' && error !== null && 'message' in error

@@ -64,7 +64,7 @@ cd ../../app
 docker build -t {YOUR_ACCOUNT}.dkr.ecr.eu-west-1.amazonaws.com/people-info-api:{NEW_VERSION}
 docker push {YOUR_ACCOUNT}.dkr.ecr.eu-west-1.amazonaws.com/people-info-api:{NEW_VERSION}
 cd ../iac/app_iac
-{add redis enpoint to app/src/app.ts}
+{add redis endpoint to app/src/app.ts}
 terraform init; terraform apply
 ```
 

@@ -92,7 +92,7 @@ curl http://{ALB_URl}/metrics
 ```
 
 ## Tests
-Not implemented because task took all my dedicated time.
+Not implemented because task took all my dedicated time to it.
 
 ## DynamoDB vs Redis
 1. Application saves data to DynamoDB and also puts it to Redis cache level. 
