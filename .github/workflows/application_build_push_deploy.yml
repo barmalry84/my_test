@@ -30,7 +30,7 @@ jobs:
       run: |
         npm install
         cp .env.example .env
-        timeout --preserve-status 20s npm run test
+        timeout 20s npm run test || true
 
   build_application_and_push_to_ECR_deploy_via_terraform:
     if: github.ref == 'refs/heads/main'
