@@ -43,7 +43,7 @@ After **basic_iac** and **app_iac** stacks are created next steps shall be done:
 2. Update host for redis cluster in **app/src/app.ts**.
 3. Push to main.
 4. Wait until workflow is done.
-5. 
+5. Find created ALB in AWS console or using terminal
 
 ## How to use app
 

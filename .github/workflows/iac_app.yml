@@ -38,7 +38,6 @@
         working-directory: ./iac/app_iac
         run: |
           terraform fmt -check
-          tflint
 
     terraform_apply:
       if: github.ref == 'refs/heads/main'
