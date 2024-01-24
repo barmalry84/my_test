@@ -40,7 +40,7 @@ In a scope of the task, it's proposed to use last option.
 ## Running in AWS (proposed way to test)
 After **basic_iac** and **app_iac** stacks are created next steps shall be done:
 1. Find our enpodint of Redis cluster in AWS.
-2. Update host for redis cluster in **app/src/app.ts**.
+2. Important!!! Update host for redis cluster in **app/src/app.ts**.
 3. Push to main.
 4. Wait until workflow is done.
 5. Find created ALB in AWS console or using terminal
@@ -84,15 +84,15 @@ curl http://{ALB_URl}/data?person_surname=<Person Surname>
 Replace `<Person Surname>` with the actual name of the person you wish to query.
 
 **Expected**: JSON response containing the details related to the specified person.
-
+s
 #### 4. Retrieve Prometheus client metrics
 
 ```bash
 curl http://{ALB_URl}/metrics
 ```
 
-## Testing
-Is not implemented because task took all dedicated time to it.
+## Tests
+Not implemented because task took all my dedicated time.
 
 ## DynamoDB vs Redis
 1. Application saves data to DynamoDB and also puts it to Redis cache level. 

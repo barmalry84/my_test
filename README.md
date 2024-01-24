@@ -64,6 +64,7 @@ cd ../../app
 docker build -t {YOUR_ACCOUNT}.dkr.ecr.eu-west-1.amazonaws.com/people-info-api:{NEW_VERSION}
 docker push {YOUR_ACCOUNT}.dkr.ecr.eu-west-1.amazonaws.com/people-info-api:{NEW_VERSION}
 cd ../iac/app_iac
+{add redis enpoint to app/src/app.ts}
 terraform init; terraform apply
 ```
 
@@ -88,3 +89,5 @@ terraform init; terraform apply
 4. **Deployments Improvements**: Improve deployment process to be able to run tests and deployments from test branches. Improve semantice versioning.
 
 5. **Grafana and Prometheus**: currently metrics are exposed by prometheus client on the Fastify server. As improvement, it could be done by central Prometheus and Grafan installation.
+
+6. **DynamoDb and Redis**: mock locally DynamoDB and Redis cluster. Automate update of Redis cluster endpoint for application.
