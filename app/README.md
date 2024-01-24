@@ -50,7 +50,7 @@ After **basic_iac** and **app_iac** stacks are created next steps shall be done:
 Run the following command to verify the server status:
 
 ```bash
-curl {ALB_URl}/status
+curl http://{ALB_URl}/status
 ```
 **Expected**: Server status.
 
@@ -78,13 +78,18 @@ curl -X POST http://{ALB_URl}/data -H "Content-Type: application/json" -d '{
 To get data by the restaurant name, use:
 
 ```bash
-curl {ALB_URl}/data?person_surname=<Person Surname>
+curl http://{ALB_URl}/data?person_surname=<Person Surname>
 ```
 
 Replace `<Person Surname>` with the actual name of the person you wish to query.
 
 **Expected**: JSON response containing the details related to the specified person.
 
+#### 4. Retrieve Prometheus client metrics
+
+```bash
+curl http://{ALB_URl}/metrics
+```
 
 ## Testing
 Is not implemented because task took all dedicated time to it.
