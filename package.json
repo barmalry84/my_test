@@ -1,6 +1,6 @@
 {
   "name": "people-info-api",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "scripts": {
     "start": "ts-node -r dotenv/config app/src/server.ts",
     "start:dev": "export ENV=local; ts-node-dev -r dotenv/config app/src/server.ts",
