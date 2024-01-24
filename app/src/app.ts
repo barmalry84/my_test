@@ -7,7 +7,9 @@ import metricsPlugin from 'fastify-metrics'
 import fastifyNoIcon from 'fastify-no-icon'
 import type pino from 'pino'
 import AWS from 'aws-sdk'
+import Redis from 'ioredis'
 
+const redis = new Redis({ host: 'people-info-api-redis-cluster.xhv9pw.0001.euw1.cache.amazonaws.com', port: 6379 });
 const DocumentClient = new AWS.DynamoDB.DocumentClient({ region: 'eu-west-1' });
 
 export async function getApp(): Promise<
@@ -36,6 +38,14 @@ export async function getApp(): Promise<
       if (!person_surname) {
         return reply.status(400).send({ error: 'person_surname query parameter is required' });
       }
+
+      // Check if data is in Redis
+      const cachedData = await redis.get(`people_info:${person_surname}`);
+      if (cachedData) {
+        // If data is in Redis, return it
+      return reply.send(JSON.parse(cachedData));
+      }
+
       const params = {
         TableName: 'PeopleInfo',
         KeyConditionExpression: 'person_surname = :personSurname',
@@ -44,9 +54,10 @@ export async function getApp(): Promise<
         }
       };
       const data = await DocumentClient.query(params).promise();
+      await redis.set(`people_info:${person_surname}`, JSON.stringify(data.Items));
       reply.send(data.Items);
     } catch (error) {
-      reply.status(500).send({ error: 'Failed to fetch data from DynamoDB' });
+      reply.status(500).send({ error: 'Failed to fetch data from DynamoDB or Redis' });
     }
   });
 
@@ -68,6 +79,10 @@ export async function getApp(): Promise<
       };
 
       await DocumentClient.put(params).promise();
+
+      // Store data in Redis for future requests
+      await redis.set(`people_info:${person_surname}`, JSON.stringify(request.body));
+
       reply.send(request.body);
       console.log('Response:', request.body);
     } catch (error) {

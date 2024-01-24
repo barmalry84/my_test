@@ -11,6 +11,7 @@ This repository includes Terraform configurations designed to establish a resili
 	- External ALB to access application (I assume here that access shall be external).
 	- Target Groups and Listeners.
 	- DynamoDB serving as the database solution.
+	- Redics cluster for cache layer between application and database.
 	- IAM role for application.
 	- ALB Security group
 3. Deploy Infra Stack:

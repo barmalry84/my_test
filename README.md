@@ -11,7 +11,7 @@ And DynamoDB is good choice for keeping unstructured datasets in JSON format (wh
 Main components of the repo are:
 1. Terraform code to spin up infrastructure (**iac** folder). After some considerations it was decided to divide terraform code at three parts to keep it manageable and decoupled. Also it aims to avoid the initial errors stemming from circular dependencies. 
 	- **basic_iac**: code for VPC, networking, ECS cluster. Which is rarely updated and shall not be run with application-related infra code.
-	- **app_iac**: code that creates basic application-related resources like ALB, listeners, IAM, DynamoDB etc. Typically it runs more often than **basic_iac** but does not direcly influence application deployment. 
+	- **app_iac**: code that creates basic application-related resources like ALB, listeners, IAM, DynamoDB, Redis etc. Typically it runs more often than **basic_iac** but does not direcly influence application deployment. 
 	- **deploy_iac**: code that is directly related to application deployments. That is mostly ECS and Task Definition pointing to certain image.
 2. Application code (**app** folder). Used to store code for Dockerfile and application.
 3. Github Workflows (**.github/workflows**) that automate infra creation and application deployments. There are three:
@@ -39,7 +39,7 @@ Workflow will run some TF checks and create basic application infrastructure. Mo
 
 ### 3. **Application deployment**
 
-After 1 and 2 steps, we are ready to deploy application. To do that, some dummy push should bes done either to **/iac/app_iac** or **app**. It shall trigger **application_build_push_deploy** workflow. It:
+After 1 and 2 steps, we are ready to deploy application. To do that, some changes should be pushed should be done either to **/iac/app_iac** or **app**. It shall trigger **application_build_push_deploy** workflow. As code currently has hard dependency on Redis cluster endpoint, we can change it durectly in **app/src/app.ts**. It:
 1. Runs npm tests.
 2. Defines current version of application and bumps it according to the semantic rules.
 3. Builds application image with new version and pushes it to ECR.
@@ -48,7 +48,8 @@ After 1 and 2 steps, we are ready to deploy application. To do that, some dummy 
 The same flow can be used to make changes to the corresponding parts of the system and day-to-day application deployments. 
 
 ### 4. **How to access application**
-After 3 step, application can be accessible via external ALB. ALB domain name could be found in AWS console. More information could be found here: https://github.com/barmalry84/my_test/blob/main/app/README.md
+After 3 step, application can be accessible via external ALB. ALB domain name could be found in AWS console. 
+More information about application could be found here: https://github.com/barmalry84/my_test/blob/main/app/README.md
 
 ## How to run application in AWS from local machine
 It is also possible to run deployment of application in AWS from local machine. For that you need to have AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY or AWS_PROFILE or assumed role to the account.

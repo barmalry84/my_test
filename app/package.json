@@ -10,6 +10,7 @@
     "@bugsnag/js": "^7.20.0",
     "@fastify/request-context": "^4.2.0",
     "aws-sdk": "latest",
+    "ioredis": "latest",
     "dotenv": "^16.0.3",
     "fastify": "^4.25",
     "fastify-healthcheck": "^4.4",
