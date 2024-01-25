@@ -39,7 +39,7 @@ Workflow will run some TF checks and create basic application infrastructure. Mo
 
 ### 3. **Application deployment**
 
-After 1 and 2 steps, we are ready to deploy application. To do that, some changes should be pushed should be done either to **/iac/app_iac** or **app**. It shall trigger **application_build_push_deploy** workflow. As code currently has hard dependency on Redis cluster endpoint, we can change it durectly in **app/src/app.ts**. It:
+After 1 and 2 steps, we are ready to deploy application. To do that, some changes should be pushed either to **/iac/app_iac** or **app**. It shall trigger **application_build_push_deploy** workflow. As code currently has hard dependency on Redis cluster endpoint, we need change it directly in **.env**. It:
 1. Runs npm tests.
 2. Defines current version of application and bumps it according to the semantic rules.
 3. Builds application image with new version and pushes it to ECR.
@@ -59,12 +59,12 @@ cd iac/basic_iac
 terraform init; terraform apply
 cd ../app_iac
 terraform init; terraform apply
-aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin {YOUR_ACCOUNT}.dkr.ecr.eu-west-1.amazonaws.com
 cd ../../app
+aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin {YOUR_ACCOUNT}.dkr.ecr.eu-west-1.amazonaws.com
 docker build -t {YOUR_ACCOUNT}.dkr.ecr.eu-west-1.amazonaws.com/people-info-api:{NEW_VERSION}
 docker push {YOUR_ACCOUNT}.dkr.ecr.eu-west-1.amazonaws.com/people-info-api:{NEW_VERSION}
-cd ../iac/app_iac
-{add redis endpoint to app/src/app.ts}
+{!!!!add redis endpoint to app/src/app.ts!!!!}
+cd ../iac/deploy_iac
 terraform init; terraform apply
 ```
 
@@ -90,4 +90,4 @@ terraform init; terraform apply
 
 5. **Grafana and Prometheus**: currently metrics are exposed by prometheus client on the Fastify server. As improvement, it could be done by central Prometheus and Grafan installation.
 
-6. **DynamoDb and Redis**: mock locally DynamoDB and Redis cluster. Automate update of Redis cluster endpoint for application.
+6. **DynamoDb and Redis**: Automate update of Redis cluster endpoint for application during deployment as env var.

@@ -38,10 +38,10 @@ In a scope of the task, it's proposed to use last option.
 2. For running DynamoDb locally, it's possible to use [DynamoDB Local](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html). But in a scope of the task it was not done.
 
 ## Running in AWS (proposed way to test)
-After **basic_iac** and **app_iac** stacks are created next steps shall be done:
-1. Find our enpodint of Redis cluster in AWS.
+After **basic_iac** and **app_iac** stacks are created, next steps shall be done:
+1. Find our endpodint of Redis cluster in AWS.
 2. Important!!! Update host for redis cluster in **app/src/app.ts**.
-3. Push to main.
+3. Push to main branch.
 4. Wait until workflow is done.
 5. Find created ALB in AWS console or using terminal
 
