@@ -29,7 +29,6 @@ jobs:
     - name: Install dependencies and run tests
       run: |
         npm install
-        cp .env.example .env
         timeout 20s npm run test || true
 
   build_application_and_push_to_ECR_deploy_via_terraform:
