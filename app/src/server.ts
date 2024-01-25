@@ -9,8 +9,8 @@ async function start() {
 
   try {
     await app.listen({
-      host: config.HOST,
-      port: config.PORT,
+      host: "0.0.0.0",
+      port: 3000,
     })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
